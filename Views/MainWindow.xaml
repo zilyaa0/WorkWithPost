@@ -5,68 +5,124 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WorkWithPost.Views"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800" MinHeight="300" MinWidth="680" WindowStartupLocation="CenterScreen">
+        Title="MainWindow" 
+        Height="450" 
+        Width="800" 
+        MinHeight="200" 
+        MinWidth="410" 
+        WindowStartupLocation="CenterScreen">
     <Window.Resources>
-        <x:Array x:Key="Limits" Type="{x:Type TextBlock}">
+        <x:Array 
+            x:Key="Limits" 
+            Type="{x:Type TextBlock}">
             <TextBlock Text="5"/>
             <TextBlock Text="10"/>
             <TextBlock Text="20"/>
         </x:Array>
     </Window.Resources>
-    <Grid>
+    <Grid Margin="3 0">
         <Grid.RowDefinitions>
-            <RowDefinition Height="40"/>
+            <RowDefinition 
+                Height="40"/>
             <RowDefinition/>
-            <RowDefinition Height="40"/>
+            <RowDefinition 
+                Height="40"/>
         </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="10"/>
-            <ColumnDefinition/>
-            <ColumnDefinition Width="10"/>
-        </Grid.ColumnDefinitions>
-        <WrapPanel Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center">
-            <TextBox Text="  Поиск" Margin="40 0" Width="300" Foreground="Gray"></TextBox>
-            <Button Content="Найти" Margin="40 0" Width="180"></Button>
-        </WrapPanel>
-        <ScrollViewer Grid.Row="1" Grid.Column="1" Margin="20 5" HorizontalScrollBarVisibility="Disabled">
-            <ListView  BorderBrush="White">
-                <ListView.ItemTemplate>
-                    <DataTemplate>
-                        <ListViewItem BorderBrush="LightGray" Margin="0 3" HorizontalContentAlignment="Stretch">
-                            <StackPanel>
-                                <TextBlock Text="отправитель" FontSize="18" FontWeight="Medium"></TextBlock>
-                                <TextBlock Text="заголовок" FontWeight="Medium"></TextBlock>
-                                <TextBlock Text="текст" TextWrapping="NoWrap" TextTrimming="WordEllipsis"></TextBlock>
-                            </StackPanel>
-                        </ListViewItem>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
-        </ScrollViewer>
-        <Grid Grid.Row="2" Grid.Column="1" HorizontalAlignment="Center">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition/>
-                <ColumnDefinition/>
-                <ColumnDefinition/>
-                <ColumnDefinition/>
-            </Grid.ColumnDefinitions>
-            <DockPanel Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="10 0">
-                <Button Content="&lt;" FontSize="16"></Button>
-                <TextBlock Text="1" Margin="5" FontSize="16"></TextBlock>
-                <Button Content=">" FontSize="16"></Button>
-            </DockPanel>
-            <WrapPanel Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="10 0">
-                <TextBlock Text="Найдено по запросу"></TextBlock>
-                <TextBox Text="   " Margin="5 0 0 0"></TextBox>
-            </WrapPanel>
-            <WrapPanel Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="10 0">
-                <TextBlock Text="Страниц"></TextBlock>
-                <TextBox Text="   " Margin="5 0 0 0"></TextBox>
-            </WrapPanel>
-            <WrapPanel Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="10 0">
-                <TextBlock Text="Загружать по" Margin="0 2"></TextBlock>
-                <ComboBox Margin="5 0 0 0" ItemsSource="{StaticResource Limits}"></ComboBox>
-            </WrapPanel>
-        </Grid>
+        <StackPanel 
+            Grid.Row="0"
+            Orientation="Horizontal"
+            VerticalAlignment="Center">
+            <TextBox 
+                Width="200"
+                Text="{Binding SearchString}"/>
+            <Button
+                Margin="3 0"
+                Padding="10 0"
+                Content="Найти"
+                Command="{Binding GetLettersByQuery}"/>
+        </StackPanel>
+        <ListView 
+            Grid.Row="1" 
+            ItemsSource="{Binding Letters}" 
+            ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+            HorizontalContentAlignment="Stretch">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <ListViewItem 
+                        BorderBrush="Gray"
+                        Height="60">
+                        <StackPanel>
+                            <TextBlock 
+                                Text="{Binding Sender}" 
+                                FontSize="18" 
+                                FontWeight="Medium"
+                                TextTrimming="WordEllipsis"/>
+                            <TextBlock 
+                                Text="{Binding Headers}" 
+                                FontWeight="Medium"
+                                TextTrimming="WordEllipsis"/>
+                            <TextBlock 
+                                Text="{Binding Text}"
+                                TextTrimming="WordEllipsis"/>
+                        </StackPanel>
+                    </ListViewItem>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+        <DockPanel
+            Grid.Row="2"
+            LastChildFill="False">
+            <StackPanel 
+                DockPanel.Dock="Left"
+                Orientation="Horizontal"
+                VerticalAlignment="Center"
+                Margin="0 0 10 0">
+                <Button 
+                    Content="&lt;"
+                    Command="{Binding PreviousPage}"/>
+                <TextBlock 
+                    Text="{Binding Page}"
+                    Margin="3 0"/>
+                <Button 
+                    Content=">"
+                    Command="{Binding NextPage}"/>
+            </StackPanel>
+            <StackPanel 
+                DockPanel.Dock="Left"
+                Orientation="Horizontal"
+                VerticalAlignment="Center"
+                Margin="0 0 10 0">
+                <TextBlock 
+                    Text="Загружать по"/>
+                <ComboBox 
+                    Margin="3 0"
+                    ItemsSource="{StaticResource Limits}"
+                    Text="{Binding Limit}"
+                    IsReadOnly="True"/>
+            </StackPanel>
+            <StackPanel
+                DockPanel.Dock="Right"
+                Orientation="Horizontal"
+                VerticalAlignment="Center">
+                <TextBlock 
+                    Text="Страниц"/>
+                <TextBox
+                    Margin="3 0"
+                    Text="{Binding PageCount}"
+                    IsReadOnly="True"/>
+            </StackPanel>
+            <StackPanel
+                DockPanel.Dock="Right"
+                Orientation="Horizontal"
+                VerticalAlignment="Center"
+                Margin="0 0 10 0">
+                <TextBlock
+                    Margin="3 0"
+                    Text="Найдено по запросу"/>
+                <TextBox 
+                    Text="{Binding TotalCount}"
+                    IsReadOnly="True"/>
+            </StackPanel>
+        </DockPanel>
     </Grid>
 </Window>
