@@ -132,14 +132,24 @@ namespace WorkWithPost.ViewModel
             {
                 return new RelayCommand(async (obj) =>
                 {
-                    var result = await apiService.GetLetters(SearchString, Page, Limit);
-                    if (result != null)
-                    {
-                        Letters = result.Letters;
-                        PageCount = (int)Math.Ceiling(Convert.ToSingle(result.TotalCount) / Convert.ToSingle(Limit));
-                        TotalCount = result.TotalCount;
-                    }
+                    Page = 1;
+                    await GetLetters();
                 });
+            }
+        }
+
+        private async Task GetLetters()
+        {
+            var result = await apiService.GetLetters(SearchString, Page, Limit);
+            if (result != null)
+            {
+                foreach (var item in result.Letters)
+                {
+                    item.Text = item.Text.Replace(Environment.NewLine, " ");
+                }
+                Letters = result.Letters;
+                PageCount = (int)Math.Ceiling(Convert.ToSingle(result.TotalCount) / Convert.ToSingle(Limit));
+                TotalCount = result.TotalCount;
             }
         }
 
@@ -147,10 +157,10 @@ namespace WorkWithPost.ViewModel
         {
             get
             {
-                return new RelayCommand((obj) =>
+                return new RelayCommand(async (obj) =>
                 {
                     Page++;
-                    GetLettersByQuery.Execute(obj);
+                    await GetLetters();
                 }, (obj) => Page < PageCount);
             }
         }
@@ -159,10 +169,10 @@ namespace WorkWithPost.ViewModel
         {
             get
             {
-                return new RelayCommand((obj) =>
+                return new RelayCommand(async (obj) =>
                 {
                     Page--;
-                    GetLettersByQuery.Execute(obj);
+                    await GetLetters();
                 }, (obj) => Page > 1);
             }
         }
