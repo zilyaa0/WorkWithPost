@@ -10,122 +10,141 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using WorkWithPost.Commands;
+using WorkWithPost.MVVMTools;
 using WorkWithPost.Models;
 using WorkWithPost.Services;
+using WorkWithPost.Views;
+using System.Diagnostics;
 
 namespace WorkWithPost.ViewModel
 {
-    class MainViewModel : INotifyPropertyChanged
+    class MainViewModel : ViewModelBase
     {
-        private List<Letter> _Letters;
-        private string _Sender;
-        private string _Headers;
-        private string _Text;
-        private string _SearchString;
-        private int _Limit;
-        private int _Page;
-        private int _PageCount;
-        private int _TotalCount;
-        private ApiService apiService;
+        #region Fields
+        private readonly ApiService _apiService;
 
-        public MainViewModel()
-        {
-            apiService = new ApiService();
-            Page = 1;
-            Limit = 5;
-        }
-
+        private List<Letter> _letters;
         public List<Letter> Letters
         {
-            get { return _Letters; }
+            get { return _letters; }
             set
             {
-                _Letters = value;
+                _letters = value;
                 OnPropertyChanged("Letters");
             }
         }
 
+        private string _sender;
         public string Sender
         {
-            get { return _Sender; }
+            get { return _sender; }
             set
             {
-                _Sender = value;
+                _sender = value;
                 OnPropertyChanged("Sender");
             }
         }
 
+        private string _headers;
         public string Header
         {
-            get { return _Headers; }
+            get { return _headers; }
             set
             {
-                _Headers = value;
+                _headers = value;
                 OnPropertyChanged("Header");
             }
         }
 
+        private string _text;
         public string Text
         {
-            get { return _Text; }
+            get { return _text; }
             set
             {
-                _Text = value;
+                _text = value;
                 OnPropertyChanged("Text");
             }
         }
 
+        private string _searchString;
         public string SearchString
         {
-            get { return _SearchString; }
+            get { return _searchString; }
             set
             {
-                _SearchString = value;
+                _searchString = value;
                 OnPropertyChanged("SearchString");
             }
         }
 
+        private int _limit;
         public int Limit
         {
-            get { return _Limit; }
+            get { return _limit; }
             set
             {
-                _Limit = value;
+                _limit = value;
                 OnPropertyChanged("Limit");
             }
         }
 
+        private int _page;
         public int Page
         {
-            get { return _Page; }
+            get { return _page; }
             set
             {
-                _Page = value;
+                _page = value;
                 OnPropertyChanged("Page");
             }
         }
 
+        private int _pageCount;
         public int PageCount
         {
-            get { return _PageCount; }
+            get { return _pageCount; }
             set
             {
-                _PageCount = value;
+                _pageCount = value;
                 OnPropertyChanged("PageCount");
             }
         }
 
+        private int _totalCount;
         public int TotalCount
         {
-            get { return _TotalCount; }
+            get { return _totalCount; }
             set
             {
-                _TotalCount = value;
+                _totalCount = value;
                 OnPropertyChanged("TotalCount");
             }
         }
 
+        private Letter _selectedLetter;
+        public Letter SelectedLetter
+        {
+            get { return _selectedLetter; }
+            set
+            {
+                _selectedLetter = value;
+                OnPropertyChanged("SelectedLetter");
+            }
+        }
+        #endregion
+
+        #region Constructor
+        public MainViewModel()
+        {
+            _apiService = new ApiService();
+            SearchString = "Строка поиска";
+            Page = 1;
+            Limit = 5;
+        }
+        #endregion
+
+        #region Commands
         public ICommand GetLettersByQuery
         {
             get
@@ -135,21 +154,6 @@ namespace WorkWithPost.ViewModel
                     Page = 1;
                     await GetLetters();
                 });
-            }
-        }
-
-        private async Task GetLetters()
-        {
-            var result = await apiService.GetLetters(SearchString, Page, Limit);
-            if (result != null)
-            {
-                foreach (var item in result.Letters)
-                {
-                    item.Text = item.Text.Replace(Environment.NewLine, " ");
-                }
-                Letters = result.Letters;
-                PageCount = (int)Math.Ceiling(Convert.ToSingle(result.TotalCount) / Convert.ToSingle(Limit));
-                TotalCount = result.TotalCount;
             }
         }
 
@@ -177,13 +181,68 @@ namespace WorkWithPost.ViewModel
             }
         }
 
-        public event PropertyChangedEventHandler? PropertyChanged;
-        public virtual void OnPropertyChanged(string propertyName)
+        public ICommand ShowSelectedLetterWindow
         {
-            if (PropertyChanged != null)
+            get
             {
-                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+                return new RelayCommand((obj) =>
+                {
+                    var letter = SelectedLetter;
+                    var win = new SelectedLetterWindow();
+                    win.DataContext = new SelectedLetterViewModel(letter);
+                    win.Show();
+                });
             }
         }
+
+        //public ICommand GetSelectedItem
+        //{
+        //    get
+        //    {
+        //        return new RelayCommand((s) => this.getSelectedItem(s));
+        //    }
+
+        //}
+
+        //private void getSelectedItem(object items)
+        //{
+        //    try
+        //    {
+        //        IList<object> item = items as IList<object>;
+
+        //        foreach (var temp in item)
+        //        {
+        //            Letter stringItem = temp as Letter;
+
+        //            SelectedLetter = stringItem;
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Debug.WriteLine(ex.Message);
+        //    }
+        //}
+        #endregion
+
+        #region Private Methods
+        private async Task GetLetters()
+        {
+            LettersQueryResult result;
+            if (SearchString == "")
+                result = await _apiService.GetAllLetters(Page, Limit);
+            else
+                result = await _apiService.GetLetters(SearchString, Page, Limit);
+            if (result != null)
+            {
+                foreach (var item in result.Letters)
+                {
+                    item.Text = item.Text.Replace(Environment.NewLine, " ");
+                }
+                Letters = result.Letters;
+                PageCount = (int)Math.Ceiling(Convert.ToSingle(result.TotalCount) / Convert.ToSingle(Limit));
+                TotalCount = result.TotalCount;
+            }
+        }
+        #endregion
     }
 }

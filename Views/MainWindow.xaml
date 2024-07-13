@@ -3,6 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:local="clr-namespace:WorkWithPost.Views"
         mc:Ignorable="d"
         Title="MainWindow" 
@@ -20,37 +21,58 @@
             <TextBlock Text="20"/>
         </x:Array>
     </Window.Resources>
-    <Grid Margin="3 0">
+    <Grid>
         <Grid.RowDefinitions>
             <RowDefinition 
-                Height="40"/>
+                Height="Auto"/>
             <RowDefinition/>
             <RowDefinition 
-                Height="40"/>
+                Height="Auto"/>
         </Grid.RowDefinitions>
         <StackPanel 
             Grid.Row="0"
             Orientation="Horizontal"
-            VerticalAlignment="Center">
-            <TextBox 
+            Margin="5">
+            <TextBox
                 Width="200"
-                Text="{Binding SearchString}"/>
+                Text="{Binding SearchString}" >
+            </TextBox>
             <Button
                 Margin="3 0"
                 Padding="10 0"
-                Content="Найти"
-                Command="{Binding GetLettersByQuery}"/>
+                Command="{Binding GetLettersByQuery}">
+                <StackPanel
+                    Orientation="Horizontal">
+                    <TextBlock 
+                        Text="Найти"/>
+                    <Image
+                        VerticalAlignment="Center"
+                        Height="12"
+                        Margin="3 0 0 0"
+                        Source="https://i.pinimg.com/originals/cd/ab/85/cdab85a392e92623afa27de32443379f.png"/>
+                </StackPanel>
+            </Button>
         </StackPanel>
-        <ListView 
-            Grid.Row="1" 
+        <ListView
+            Grid.Row="1"
+            Name="ListView"
+            Margin="5 0"
             ItemsSource="{Binding Letters}" 
             ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-            HorizontalContentAlignment="Stretch">
+            HorizontalContentAlignment="Stretch"
+            SelectedItem="{Binding SelectedLetter}">
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="MouseDoubleClick">
+                    <i:InvokeCommandAction 
+                        Command="{Binding ShowSelectedLetterWindow}"/>
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <ListViewItem 
                         BorderBrush="Gray"
-                        Height="60">
+                        MinHeight="20"
+                        MaxHeight="60">
                         <StackPanel>
                             <TextBlock 
                                 Text="{Binding Sender}" 
@@ -71,17 +93,17 @@
         </ListView>
         <DockPanel
             Grid.Row="2"
-            LastChildFill="False">
+            LastChildFill="False"
+            Margin="5">
             <StackPanel 
                 DockPanel.Dock="Left"
-                Orientation="Horizontal"
-                VerticalAlignment="Center"
-                Margin="0 0 10 0">
+                Orientation="Horizontal">
                 <Button 
                     Content="&lt;"
                     Command="{Binding PreviousPage}"/>
                 <TextBlock 
                     Text="{Binding Page}"
+                    VerticalAlignment="Center"
                     Margin="3 0"/>
                 <Button 
                     Content=">"
@@ -90,10 +112,10 @@
             <StackPanel 
                 DockPanel.Dock="Left"
                 Orientation="Horizontal"
-                VerticalAlignment="Center"
-                Margin="0 0 10 0">
+                Margin="10 0">
                 <TextBlock 
-                    Text="Загружать по"/>
+                    Text="Загружать по"
+                    VerticalAlignment="Center"/>
                 <ComboBox 
                     Margin="3 0"
                     ItemsSource="{StaticResource Limits}"
@@ -102,26 +124,18 @@
             </StackPanel>
             <StackPanel
                 DockPanel.Dock="Right"
-                Orientation="Horizontal"
-                VerticalAlignment="Center">
-                <TextBlock 
-                    Text="Страниц"/>
-                <TextBox
-                    Margin="3 0"
-                    Text="{Binding PageCount}"
-                    IsReadOnly="True"/>
-            </StackPanel>
-            <StackPanel
-                DockPanel.Dock="Right"
-                Orientation="Horizontal"
-                VerticalAlignment="Center"
-                Margin="0 0 10 0">
+                Orientation="Horizontal">
                 <TextBlock
-                    Margin="3 0"
-                    Text="Найдено по запросу"/>
-                <TextBox 
-                    Text="{Binding TotalCount}"
-                    IsReadOnly="True"/>
+                    VerticalAlignment="Center">
+                    <Run 
+                        Text="Найдено по запросу"/>
+                    <Run 
+                        Text="{Binding TotalCount}"/>
+                    <Run 
+                        Text="Страниц"/>
+                    <Run 
+                        Text="{Binding PageCount}"/>
+                </TextBlock>
             </StackPanel>
         </DockPanel>
     </Grid>

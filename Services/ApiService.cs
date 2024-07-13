@@ -18,7 +18,22 @@ namespace WorkWithPost.Services
         {
             using (var client = new HttpClient())
             {
-                HttpResponseMessage response = await client.GetAsync($"https://localhost:7261/api/Letter?page={page}&limit={limit}&searchString={searchString}");
+                HttpResponseMessage response = await client.GetAsync($"https://localhost:7261/api/Letter/GetLettersByPage?page={page}&limit={limit}&searchString={searchString}");
+                if (response.IsSuccessStatusCode)
+                {
+                    string json = await response.Content.ReadAsStringAsync();
+                    LettersQueryResult letters = JsonConvert.DeserializeObject<LettersQueryResult>(json);
+                    return letters;
+                }
+                else { return null; }
+            }
+        }
+
+        public async Task<LettersQueryResult?> GetAllLetters(int page, int limit)
+        {
+            using (var client = new HttpClient())
+            {
+                HttpResponseMessage response = await client.GetAsync($"https://localhost:7261/api/Letter/GetAllLetters?page={page}&limit={limit}");
                 if (response.IsSuccessStatusCode)
                 {
                     string json = await response.Content.ReadAsStringAsync();

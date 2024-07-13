@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
-namespace WorkWithPost.Commands
+namespace WorkWithPost.MVVMTools
 {
     internal class RelayCommand : ICommand
     {
