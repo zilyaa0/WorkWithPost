@@ -22,6 +22,7 @@ namespace WorkWithPost.Models
         public string Headers { get; set; }
         public string Text { get; set; }
         public string MessageId { get; set; }
+        public string UniqueId { get; set; }
     }
 
 

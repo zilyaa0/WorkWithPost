@@ -3,13 +3,14 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:local="clr-namespace:WorkWithPost.Views"
         mc:Ignorable="d"
         Title="SelectedLetterWindow" 
         Height="450" 
         Width="800"
         MinHeight="200" 
-        MinWidth="410" 
+        MinWidth="300" 
         WindowStartupLocation="CenterScreen">
     <Window.Resources>
         <Style 
@@ -19,60 +20,100 @@
                 Property="BorderThickness" Value="1" />
             <Setter 
                 Property="BorderBrush" Value="Gray" />
+            <Setter
+                Property="Padding" Value="2"/>
         </Style>
     </Window.Resources>
     <Grid>
-        <StackPanel
-            Margin="5">
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition
-                        Height="Auto"/>
-                    <RowDefinition
-                        Height="5"/>
-                    <RowDefinition
-                        Height="Auto"/>
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition
-                        Width="Auto"/>
-                    <ColumnDefinition/>
-                </Grid.ColumnDefinitions>
-                <TextBlock
-                    Grid.Column="0"
-                    Grid.Row="0"
-                    Text="От кого:"/>
-                <Border
-                    Grid.Column="1"
-                    Grid.Row="0"
-                    Margin="3 0 0 0"
+        <ScrollViewer>
+            <StackPanel
+                Margin="5">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition
+                            Height="Auto"/>
+                        <RowDefinition
+                            Height="5"/>
+                        <RowDefinition
+                            Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition
+                            Width="Auto"/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock
+                        Grid.Column="0"
+                        Grid.Row="0"
+                        Text="От кого:"
+                        VerticalAlignment="Center"/>
+                    <Border
+                        Grid.Column="1"
+                        Grid.Row="0"
+                        Margin="3 0 0 0"
+                        Style="{StaticResource BorderStyle}">
+                        <TextBlock
+                            TextWrapping="Wrap"
+                            TextTrimming="WordEllipsis"
+                            Text="{Binding Letter.Sender}"/>
+                    </Border>
+                    <TextBlock
+                        Grid.Column="0"
+                        Grid.Row="2"
+                        HorizontalAlignment="Right"
+                        Text="Тема:"
+                        VerticalAlignment="Center"/>
+                    <Border
+                        Grid.Column="1"
+                        Grid.Row="2"
+                        Margin="3 0 0 0"
+                        Style="{StaticResource BorderStyle}">
+                        <TextBlock
+                            TextWrapping="Wrap"
+                            TextTrimming="WordEllipsis"
+                            Text="{Binding Letter.Headers}"/>
+                    </Border>
+                </Grid>
+                <TextBlock 
+                    Text="Текст"
+                    VerticalAlignment="Center"
+                    Margin="0 5 0 3"/>
+                <Border 
                     Style="{StaticResource BorderStyle}">
-                    <TextBlock 
-                        Text="Тут должнен быть отправитель"/>
-                </Border>
-                <TextBlock
-                    Grid.Column="0"
-                    Grid.Row="2"
-                    HorizontalAlignment="Right"
-                    Text="Тема:"/>
-                <Border
-                    Grid.Column="1"
-                    Grid.Row="2"
-                    Margin="3 0 0 0"
-                    Style="{StaticResource BorderStyle}">
-                    <TextBlock 
-                        Text="Тут должнa быть тема"/>
-                </Border>
-            </Grid>
-            <TextBlock 
-                Text="Текст"
-                Margin="0 5 0 3"/>
-            <Border 
-                Style="{StaticResource BorderStyle}">
-                <TextBlock
+                    <TextBlock
                     MinHeight="80"
-                Text="Тут должен быть текст"/>
-            </Border>
-        </StackPanel>
+                    TextWrapping="Wrap"
+                    TextTrimming="WordEllipsis"
+                    Text="{Binding Letter.Text}"/>
+                </Border>
+                <ListView
+                    Padding="-2 2"
+                    ItemsSource="{Binding FilesNames}" 
+                    HorizontalContentAlignment="Left"
+                    VerticalContentAlignment="Top"
+                    BorderBrush="Gray"
+                    BorderThickness="1"
+                    Margin="0 5"
+                    SelectedItem="{Binding SelectedFile}">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="MouseDoubleClick">
+                            <i:InvokeCommandAction 
+                                Command="{Binding OpenFile}"/>
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <Border
+                                Width="Auto"
+                                Background="LightGray"
+                                Style="{StaticResource BorderStyle}">
+                                <TextBlock 
+                                    Text="{Binding Name}"/>
+                            </Border>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </StackPanel>
+        </ScrollViewer>
     </Grid>
 </Window>

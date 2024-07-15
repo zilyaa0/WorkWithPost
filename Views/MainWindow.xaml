@@ -35,7 +35,17 @@
             Margin="5">
             <TextBox
                 Width="200"
-                Text="{Binding SearchString}" >
+                Text="{Binding SearchString}">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="GotFocus">
+                        <i:InvokeCommandAction 
+                            Command="{Binding GotFocusCommand}"/>
+                    </i:EventTrigger>
+                    <i:EventTrigger EventName="LostFocus">
+                        <i:InvokeCommandAction 
+                            Command="{Binding LostFocusCommand}"/>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
             </TextBox>
             <Button
                 Margin="3 0"
@@ -57,6 +67,7 @@
             Grid.Row="1"
             Name="ListView"
             Margin="5 0"
+            Padding="-2 2"
             ItemsSource="{Binding Letters}" 
             ScrollViewer.HorizontalScrollBarVisibility="Disabled"
             HorizontalContentAlignment="Stretch"
@@ -69,8 +80,9 @@
             </i:Interaction.Triggers>
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <ListViewItem 
+                    <Border 
                         BorderBrush="Gray"
+                        BorderThickness="1"
                         MinHeight="20"
                         MaxHeight="60">
                         <StackPanel>
@@ -87,7 +99,7 @@
                                 Text="{Binding Text}"
                                 TextTrimming="WordEllipsis"/>
                         </StackPanel>
-                    </ListViewItem>
+                    </Border>
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>

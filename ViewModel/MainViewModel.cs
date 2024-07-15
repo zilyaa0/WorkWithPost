@@ -21,7 +21,7 @@ namespace WorkWithPost.ViewModel
     class MainViewModel : ViewModelBase
     {
         #region Fields
-        private readonly ApiService _apiService;
+        private readonly IApiService _apiService;
 
         private List<Letter> _letters;
         public List<Letter> Letters
@@ -195,40 +195,34 @@ namespace WorkWithPost.ViewModel
             }
         }
 
-        //public ICommand GetSelectedItem
-        //{
-        //    get
-        //    {
-        //        return new RelayCommand((s) => this.getSelectedItem(s));
-        //    }
+        public ICommand GotFocusCommand
+        {
+            get
+            {
+                return new RelayCommand((obj) =>
+                {
+                    SearchString = "";
+                }, (obj) => SearchString == "Строка поиска");
+            }
+        }
 
-        //}
-
-        //private void getSelectedItem(object items)
-        //{
-        //    try
-        //    {
-        //        IList<object> item = items as IList<object>;
-
-        //        foreach (var temp in item)
-        //        {
-        //            Letter stringItem = temp as Letter;
-
-        //            SelectedLetter = stringItem;
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        Debug.WriteLine(ex.Message);
-        //    }
-        //}
+        public ICommand LostFocusCommand
+        {
+            get
+            {
+                return new RelayCommand((obj) =>
+                {
+                    SearchString = "Строка поиска";
+                }, (obj) => SearchString == "");
+            }
+        }
         #endregion
 
         #region Private Methods
         private async Task GetLetters()
         {
             LettersQueryResult result;
-            if (SearchString == "")
+            if (SearchString == "Строка поиска")
                 result = await _apiService.GetAllLetters(Page, Limit);
             else
                 result = await _apiService.GetLetters(SearchString, Page, Limit);
