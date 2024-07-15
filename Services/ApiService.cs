@@ -14,12 +14,16 @@ using WorkWithPost.ViewModel;
 
 namespace WorkWithPost.Services
 {
+    #region Interface
     interface IApiService
     {
         Task<LettersQueryResult?> GetLetters(string searchString, int page, int limit);
         Task<LettersQueryResult?> GetAllLetters(int page, int limit);
         Task<List<FileName>> GetFilesNames(string uniqueId);
     }
+    #endregion
+
+    #region Public Metods
     public class ApiService : IApiService
     {
         public async Task<LettersQueryResult?> GetLetters(string searchString, int page, int limit)
@@ -66,5 +70,6 @@ namespace WorkWithPost.Services
                 else { return null; }
             }
         }
+        #endregion
     }
 }

@@ -104,7 +104,8 @@
                     <ListView.ItemTemplate>
                         <DataTemplate>
                             <Border
-                                Width="Auto"
+                                MinWidth="30"
+                                MaxWidth="100"
                                 Background="LightGray"
                                 Style="{StaticResource BorderStyle}">
                                 <TextBlock 

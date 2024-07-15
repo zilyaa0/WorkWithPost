@@ -63,7 +63,13 @@ namespace WorkWithPost.ViewModel
         {
             _apiService = new ApiService();
             Letter = selectedLetter;
-            FilesNames = _apiService.GetFilesNames(selectedLetter.UniqueId).Result;
+        }
+        #endregion
+
+        #region Public Methods
+        public async Task Load()
+        {
+            FilesNames = await _apiService.GetFilesNames(Letter.UniqueId);
         }
         #endregion
 
@@ -74,15 +80,22 @@ namespace WorkWithPost.ViewModel
             {
                 return new RelayCommand(async (obj) =>
                 {
-                    var cmd = Path.Combine($"C:\\Users\\Пользователь\\source\\repos\\ask2\\Emails\\", Letter.UniqueId, SelectedFile.Name);
-                    var process = new Process();
-                    process.StartInfo = new ProcessStartInfo(cmd)
-                    {
-                        UseShellExecute = true
-                    };
-                    process.Start();
+                    OpenSelectedFile();
                 });
             }
+        }
+        #endregion
+
+        #region Private Methods
+        private void OpenSelectedFile()
+        {
+            var cmd = Path.Combine($"C:\\Users\\Пользователь\\source\\repos\\ask2\\Emails\\", Letter.UniqueId, SelectedFile.Name);
+            var process = new Process();
+            process.StartInfo = new ProcessStartInfo(cmd)
+            {
+                UseShellExecute = true
+            };
+            process.Start();
         }
         #endregion
     }

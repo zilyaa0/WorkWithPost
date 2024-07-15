@@ -189,7 +189,12 @@ namespace WorkWithPost.ViewModel
                 {
                     var letter = SelectedLetter;
                     var win = new SelectedLetterWindow();
-                    win.DataContext = new SelectedLetterViewModel(letter);
+                    var data = new SelectedLetterViewModel(letter);
+                    win.DataContext = data;
+                    win.Loaded += async (e, o) =>
+                    {
+                        await data.Load();
+                    };
                     win.Show();
                 });
             }
