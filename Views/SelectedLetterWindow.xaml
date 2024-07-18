@@ -109,7 +109,9 @@
                                 Background="LightGray"
                                 Style="{StaticResource BorderStyle}">
                                 <TextBlock 
-                                    Text="{Binding Name}"/>
+                                    Text="{Binding Name}"
+                                    TextWrapping="NoWrap"
+                                    TextTrimming="WordEllipsis"/>
                             </Border>
                         </DataTemplate>
                     </ListView.ItemTemplate>
