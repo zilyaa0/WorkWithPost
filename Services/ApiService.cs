@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
@@ -20,6 +21,7 @@ namespace WorkWithPost.Services
         Task<LettersQueryResult?> GetLetters(string searchString, int page, int limit);
         Task<LettersQueryResult?> GetAllLetters(int page, int limit);
         Task<List<FileName>> GetFilesNames(string uniqueId);
+        Task LoadFile(string uniqueId, string fileName);
     }
     #endregion
 
@@ -68,6 +70,29 @@ namespace WorkWithPost.Services
                     return files;
                 }
                 else { return null; }
+            }
+        }
+
+        public async Task LoadFile(string uniqueId, string fileName)
+        {
+            using (var client = new HttpClient())
+            {
+                var pathDir = Path.Combine(Environment.CurrentDirectory, "Emails", uniqueId);
+                if (!Directory.Exists(pathDir))
+                    Directory.CreateDirectory(pathDir);
+                var path = Path.Combine(pathDir, fileName);
+                if (!File.Exists(path))
+                {
+                    await using var stream = await client.GetStreamAsync($"https://localhost:7261/api/Letter/LoadFile?uniqueId={uniqueId}&fileName={fileName}");
+                    await using var file = File.Create(path);
+                    await stream.CopyToAsync(file);
+                }
+                var process = new Process();
+                process.StartInfo = new ProcessStartInfo(path)
+                {
+                    UseShellExecute = true
+                };
+                process.Start();
             }
         }
         #endregion

@@ -9,114 +9,96 @@
         Title="SelectedLetterWindow" 
         Height="450" 
         Width="800"
-        MinHeight="200" 
+        MinHeight="250" 
         MinWidth="300" 
-        WindowStartupLocation="CenterScreen">
-    <Window.Resources>
-        <Style 
-            x:Key="BorderStyle" 
-            TargetType="{x:Type Border}">
-            <Setter 
-                Property="BorderThickness" Value="1" />
-            <Setter 
-                Property="BorderBrush" Value="Gray" />
-            <Setter
-                Property="Padding" Value="2"/>
-        </Style>
-    </Window.Resources>
-    <Grid>
-        <ScrollViewer>
-            <StackPanel
-                Margin="5">
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition
-                            Height="Auto"/>
-                        <RowDefinition
-                            Height="5"/>
-                        <RowDefinition
-                            Height="Auto"/>
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition
-                            Width="Auto"/>
-                        <ColumnDefinition/>
-                    </Grid.ColumnDefinitions>
-                    <TextBlock
-                        Grid.Column="0"
-                        Grid.Row="0"
-                        Text="От кого:"
-                        VerticalAlignment="Center"/>
-                    <Border
-                        Grid.Column="1"
-                        Grid.Row="0"
-                        Margin="3 0 0 0"
-                        Style="{StaticResource BorderStyle}">
-                        <TextBlock
-                            TextWrapping="Wrap"
-                            TextTrimming="WordEllipsis"
-                            Text="{Binding Letter.Sender}"/>
-                    </Border>
-                    <TextBlock
-                        Grid.Column="0"
-                        Grid.Row="2"
-                        HorizontalAlignment="Right"
-                        Text="Тема:"
-                        VerticalAlignment="Center"/>
-                    <Border
-                        Grid.Column="1"
-                        Grid.Row="2"
-                        Margin="3 0 0 0"
-                        Style="{StaticResource BorderStyle}">
-                        <TextBlock
-                            TextWrapping="Wrap"
-                            TextTrimming="WordEllipsis"
-                            Text="{Binding Letter.Headers}"/>
-                    </Border>
-                </Grid>
-                <TextBlock 
-                    Text="Текст"
-                    VerticalAlignment="Center"
-                    Margin="0 5 0 3"/>
-                <Border 
-                    Style="{StaticResource BorderStyle}">
-                    <TextBlock
-                    MinHeight="80"
-                    TextWrapping="Wrap"
-                    TextTrimming="WordEllipsis"
-                    Text="{Binding Letter.Text}"/>
-                </Border>
-                <ListView
-                    Padding="-2 2"
-                    ItemsSource="{Binding FilesNames}" 
-                    HorizontalContentAlignment="Left"
-                    VerticalContentAlignment="Top"
-                    BorderBrush="Gray"
-                    BorderThickness="1"
-                    Margin="0 5"
-                    SelectedItem="{Binding SelectedFile}">
-                    <i:Interaction.Triggers>
-                        <i:EventTrigger EventName="MouseDoubleClick">
-                            <i:InvokeCommandAction 
-                                Command="{Binding OpenFile}"/>
-                        </i:EventTrigger>
-                    </i:Interaction.Triggers>
-                    <ListView.ItemTemplate>
-                        <DataTemplate>
-                            <Border
-                                MinWidth="30"
-                                MaxWidth="100"
-                                Background="LightGray"
-                                Style="{StaticResource BorderStyle}">
-                                <TextBlock 
-                                    Text="{Binding Name}"
-                                    TextWrapping="NoWrap"
-                                    TextTrimming="WordEllipsis"/>
-                            </Border>
-                        </DataTemplate>
-                    </ListView.ItemTemplate>
-                </ListView>
-            </StackPanel>
-        </ScrollViewer>
+        WindowStartupLocation="CenterScreen"
+        x:Name="SelectedLetterWin">
+    <Grid
+        Margin="5">
+        <Grid.RowDefinitions>
+            <RowDefinition
+                Height="Auto"/>
+            <RowDefinition
+                Height="Auto"/>
+            <RowDefinition
+                Height="*"
+                MinHeight="100"/>
+            <RowDefinition
+                Height="Auto"/>
+            <RowDefinition
+                Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition
+                Width="Auto"/>
+            <ColumnDefinition
+                Width="*"/>
+        </Grid.ColumnDefinitions>
+        <TextBlock
+            Grid.Column="0"
+            Grid.Row="0"
+            VerticalAlignment="Center"
+            HorizontalAlignment="Right"
+            Text="От кого:"/>
+        <TextBox
+            Grid.Column="1"
+            Grid.Row="0"
+            IsReadOnly="True"
+            Margin="3 0 0 0"
+            Text="{Binding Letter.Sender}"/>
+        <TextBlock
+            Grid.Column="0"
+            Grid.Row="1"
+            VerticalAlignment="Center"
+            HorizontalAlignment="Right"
+            Text="Тема:"/>
+        <TextBox
+            Grid.Column="1"
+            Grid.Row="1"
+            IsReadOnly="True"
+            Margin="3 3 0 0"
+            Text="{Binding Letter.Headers}"/>
+        <DockPanel
+            Grid.ColumnSpan="2"
+            Grid.Row="2"
+            Margin="0 3">
+            <TextBlock
+                DockPanel.Dock="Top"
+                Text="Текст"/>
+            <TextBox
+                IsReadOnly="True"
+                Text="{Binding Letter.Text}"
+                TextWrapping="Wrap"/>
+        </DockPanel>
+        <ItemsControl
+            Grid.ColumnSpan="2"
+            Grid.Row="3"
+            Margin="0"
+            ItemsSource="{Binding FilesNames}">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <WrapPanel/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Button
+                        Margin="0 0 3 3"
+                        Content="{Binding Name}"
+                        Command="{Binding DataContext.OpenFile, 
+                                  RelativeSource={RelativeSource AncestorType=Window}}"
+                        CommandParameter="{Binding RelativeSource={RelativeSource Mode=Self}, Path=Content}"/>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+        <Button
+            Grid.ColumnSpan="2"
+            Grid.Row="4"
+            HorizontalAlignment="Right"
+            Content="Закрыть"
+            Padding="10 0"
+            Width="Auto"
+            Command="{Binding CloseWin}"
+            CommandParameter="{Binding ElementName=SelectedLetterWin}"/>
     </Grid>
 </Window>

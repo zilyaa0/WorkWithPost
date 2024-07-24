@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using WorkWithPost.Models;
@@ -18,6 +19,7 @@ namespace WorkWithPost.ViewModel
     public class FileName
     {
         public string Name { get; set; }
+
     }
     public class SelectedLetterViewModel : ViewModelBase
     {
@@ -80,22 +82,32 @@ namespace WorkWithPost.ViewModel
             {
                 return new RelayCommand(async (obj) =>
                 {
-                    OpenSelectedFile();
+                    SelectedFile = new FileName()
+                    {
+                        Name = obj as string
+                    };
+                    await OpenSelectedFile();
+                });
+            }
+        }
+
+        public ICommand CloseWin
+        {
+            get
+            {
+                return new RelayCommand((obj) =>
+                {
+                    Window window = obj as Window;
+                    window.Close();
                 });
             }
         }
         #endregion
 
         #region Private Methods
-        private void OpenSelectedFile()
+        private async Task OpenSelectedFile()
         {
-            var cmd = Path.Combine($"C:\\Users\\Пользователь\\source\\repos\\ask2\\Emails\\", Letter.UniqueId, SelectedFile.Name);
-            var process = new Process();
-            process.StartInfo = new ProcessStartInfo(cmd)
-            {
-                UseShellExecute = true
-            };
-            process.Start();
+            await _apiService.LoadFile(Letter.UniqueId, SelectedFile.Name);
         }
         #endregion
     }
